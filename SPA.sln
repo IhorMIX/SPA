@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPA.Web", "SPA.Web\SPA.Web.csproj", "{7B818829-2FAF-411C-8C68-A3BFD4E1D36D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPA.DAL", "SPA.DAL\SPA.DAL.csproj", "{37D58882-382E-4F56-8682-82F2CF50A927}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPA.BLL", "SPA.BLL\SPA.BLL.csproj", "{F92E4F25-D456-44A1-B56E-1A519116E739}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{7B818829-2FAF-411C-8C68-A3BFD4E1D36D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7B818829-2FAF-411C-8C68-A3BFD4E1D36D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7B818829-2FAF-411C-8C68-A3BFD4E1D36D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37D58882-382E-4F56-8682-82F2CF50A927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D58882-382E-4F56-8682-82F2CF50A927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D58882-382E-4F56-8682-82F2CF50A927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D58882-382E-4F56-8682-82F2CF50A927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F92E4F25-D456-44A1-B56E-1A519116E739}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F92E4F25-D456-44A1-B56E-1A519116E739}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F92E4F25-D456-44A1-B56E-1A519116E739}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F92E4F25-D456-44A1-B56E-1A519116E739}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
