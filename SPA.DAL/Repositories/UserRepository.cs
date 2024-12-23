@@ -18,18 +18,12 @@ public class UserRepository(SPADbContext spaDbContext) : IUserRepository
         return await _spaDbContext.Users.FirstOrDefaultAsync(i => i.Id == id, cancellationToken: cancellationToken);
     }
 
-    public async Task CreateUser(User user, CancellationToken cancellationToken = default)
+    public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
     {
         await _spaDbContext.Users.AddAsync(user, cancellationToken);
         await _spaDbContext.SaveChangesAsync(cancellationToken);
+        return user;
     }
-
-    public async Task UpdateUserAsync(User user, CancellationToken cancellationToken = default)
-    {
-        _spaDbContext.Users.Update(user);
-        await _spaDbContext.SaveChangesAsync(cancellationToken);
-    }
-
     public async Task DeleteUserAsync(User user, CancellationToken cancellationToken = default)
     {
         _spaDbContext.Users.Remove(user);
