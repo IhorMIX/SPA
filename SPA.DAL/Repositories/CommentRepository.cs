@@ -34,6 +34,15 @@ public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<IEnumerable<Comment>> GetCommentsTreeAsync(CancellationToken cancellationToken = default)
+    {
+        return await _spaDbContext.Comments
+            .Include(c => c.User)
+            .Include(c => c.Replies)
+            .Include(c => c.Attachments)
+            .Where(c => c.ParentCommentId == null)
+            .ToListAsync(cancellationToken);
+    }
     public async Task AddAsync(Comment comment, CancellationToken cancellationToken = default)
     {
         await _spaDbContext.Comments.AddAsync(comment, cancellationToken);
