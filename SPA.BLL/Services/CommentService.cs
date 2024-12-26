@@ -40,9 +40,22 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
     {
         var commentDb = await commentRepository.GetByIdAsync(commentId, cancellationToken);
         if (commentDb == null)
-        {
             throw new CommentNotFoundException($"Comment with this Id {commentId} not found");
-        }
+        
         await commentRepository.DeleteAsync(commentDb, cancellationToken);
+    }
+
+    public async Task<IEnumerable<CommentModel>> GetRepliesAsync(int commentId, CancellationToken cancellationToken = default)
+    {
+        var parentComment = await commentRepository.GetByIdAsync(commentId, cancellationToken);
+        if (parentComment == null)
+            throw new CommentNotFoundException($"Comment with ID {commentId} not found.");
+        
+        if (parentComment.ParentCommentId != null)
+            throw new CommentIsNotMainException($"Comment with ID {commentId} is not a top-level comment.");
+        
+        var replies = await commentRepository.GetRepliesAsync(commentId, cancellationToken);
+        
+        return mapper.Map<IEnumerable<CommentModel>>(replies);
     }
 }

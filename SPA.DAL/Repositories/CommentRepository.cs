@@ -40,7 +40,7 @@ public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
             .Include(c => c.User)
             .Include(c => c.Replies)
             .Include(c => c.Attachments)
-            .Where(c => c.ParentCommentId == null)
+            // .Where(c => c.ParentCommentId == null)
             .ToListAsync(cancellationToken);
     }
     public async Task AddAsync(Comment comment, CancellationToken cancellationToken = default)
