@@ -20,23 +20,26 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         return commentModel;
     }
 
-    public async Task AddAsync(CommentModel commentModel,UserModel userModel, CancellationToken cancellationToken = default)
+    public async Task<CommentModel> AddCommentAsync(CommentModel commentModel, CancellationToken cancellationToken = default)
     {
-        var commentDb = await commentRepository.GetByIdAsync(commentModel.Id, cancellationToken);
-        if (commentDb == null)
+        // var userDb = await userRepository.GetByIdAsync(userModel.Id, cancellationToken);
+        // if (userDb == null)
+        // {
+        //     throw new UserNotFoundException($"User with this Id {userModel.Id} not found");
+        // }
+        var comment = new Comment
         {
-            throw new CommentNotFoundException($"Comment with this Id {commentModel.Id} not found");
-        }
-        var userDb = await userRepository.GetByIdAsync(userModel.Id, cancellationToken);
-        if (userDb == null)
-        {
-            throw new UserNotFoundException($"User with this Id {userModel.Id} not found");
-        }
-        commentDb.CreatedAt = DateTime.UtcNow;
-        await commentRepository.AddAsync(commentDb, cancellationToken);
+            Text = commentModel.Text,
+            CreatedAt = DateTime.UtcNow,
+            ParentCommentId = commentModel.ParentCommentId,
+            UserId = commentModel.UserId
+        };
+        
+        await commentRepository.AddAsync(comment, cancellationToken);
+        return mapper.Map<CommentModel>(comment);
     }
 
-    public async Task DeleteAsync(int commentId, CancellationToken cancellationToken = default)
+    public async Task DeleteCommentAsync(int commentId, CancellationToken cancellationToken = default)
     {
         var commentDb = await commentRepository.GetByIdAsync(commentId, cancellationToken);
         if (commentDb == null)
