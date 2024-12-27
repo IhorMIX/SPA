@@ -28,6 +28,9 @@ public class Startup
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IUserService, UserService>();
         
+        services.AddScoped<ICommentService, CommentService>();
+        services.AddScoped<ICommentRepository, CommentRepository>();
+        
         services.AddControllers();
     }
     

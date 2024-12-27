@@ -11,5 +11,9 @@ public class MapperModelsConfig : Profile
     {
         CreateMap<User, UserModel>().ReverseMap();
         CreateMap<UserModel, UserViewModel>();
+
+        CreateMap<CommentCreateModel, CommentModel>();
+        CreateMap<Comment, CommentModel>();
+        CreateMap<CommentModel, CommentViewModel>();
     }
 }
