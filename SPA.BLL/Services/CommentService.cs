@@ -58,4 +58,14 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         
         return mapper.Map<IEnumerable<CommentModel>>(replies);
     }
+
+    public async Task<CommentModel> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
+    {
+        var parentComment = await commentRepository.GetByIdAsync(commentId, cancellationToken);
+        if (parentComment == null)
+            throw new CommentNotFoundException($"Comment with ID {commentId} not found.");
+
+        var tree = await commentRepository.GetCommentsTreeAsync(commentId, cancellationToken);
+        return mapper.Map<CommentModel>(tree);
+    }
 }
