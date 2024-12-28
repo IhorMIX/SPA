@@ -8,6 +8,22 @@ public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
 {
     private readonly SPADbContext _spaDbContext = spaDbContext;
     
+    private async Task LoadRepliesAsync(Comment comment, CancellationToken cancellationToken)
+    {
+        var replies = await _spaDbContext.Comments
+            .Include(c => c.User)
+            .Include(c => c.Replies)
+            .ThenInclude(r => r.User)
+            .Where(c => c.ParentCommentId == comment.Id)
+            .ToListAsync(cancellationToken);
+
+        comment.Replies = replies;
+        
+        foreach (var reply in replies)
+        {
+            await LoadRepliesAsync(reply, cancellationToken);
+        }
+    }
     public IQueryable<Comment> GetAll()
     {
         return _spaDbContext.Comments
@@ -25,7 +41,6 @@ public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
             .Include(i => i.Attachments)
             .FirstOrDefaultAsync(i => i.Id == id, cancellationToken: cancellationToken);
     }
-
     public async Task<IEnumerable<Comment>> GetRepliesAsync(int commentId, CancellationToken cancellationToken = default)
     {
         return await _spaDbContext.Comments
@@ -34,14 +49,19 @@ public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
             .ToListAsync(cancellationToken);
     }
 
-    public async Task<Comment?> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<Comment?>> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
     {
-        return await _spaDbContext.Comments
+        var comment = await _spaDbContext.Comments
             .Include(c => c.User)
             .Include(c => c.Replies)
             .ThenInclude(r => r.User)
             .Include(c => c.Attachments)
-            .FirstOrDefaultAsync(c => c.Id == commentId, cancellationToken);
+            .Where(c => c.Id == commentId)
+            .FirstOrDefaultAsync(cancellationToken);
+        
+        await LoadRepliesAsync(comment, cancellationToken);
+
+        return new List<Comment?> { comment };
     }
 
     public async Task AddAsync(Comment comment, CancellationToken cancellationToken = default)
