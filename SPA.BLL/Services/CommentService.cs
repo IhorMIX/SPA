@@ -20,7 +20,7 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         return commentModel;
     }
 
-    public async Task<CommentModel> AddCommentAsync(CommentModel commentModel, CancellationToken cancellationToken = default)
+    public async Task<CommentModel> AddCommentAsync(string text,int parentCommentId,int userId, CancellationToken cancellationToken = default)
     {
         // var userDb = await userRepository.GetByIdAsync(userModel.Id, cancellationToken);
         // if (userDb == null)
@@ -29,10 +29,10 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         // }
         var comment = new Comment
         {
-            Text = commentModel.Text,
+            Text = text,
             CreatedAt = DateTime.UtcNow,
-            ParentCommentId = commentModel.ParentCommentId,
-            UserId = commentModel.UserId
+            ParentCommentId = parentCommentId,
+            UserId = userId
         };
         
         await commentRepository.AddAsync(comment, cancellationToken);
@@ -62,13 +62,13 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         return mapper.Map<IEnumerable<CommentModel>>(replies);
     }
 
-    public async Task<CommentModel> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<CommentModel>> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
     {
         var parentComment = await commentRepository.GetByIdAsync(commentId, cancellationToken);
         if (parentComment == null)
             throw new CommentNotFoundException($"Comment with ID {commentId} not found.");
 
         var tree = await commentRepository.GetCommentsTreeAsync(commentId, cancellationToken);
-        return mapper.Map<CommentModel>(tree);
+        return mapper.Map<IEnumerable<CommentModel>>(tree);
     }
 }
