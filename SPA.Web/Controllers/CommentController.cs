@@ -1,7 +1,6 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SPA.BLL.Models;
 using SPA.BLL.Services.Interfaces;
 using SPA.Web.Models;
 
@@ -17,16 +16,31 @@ public class CommentController(IUserService userService, ICommentService comment
     public async Task<IActionResult> CreateCommentAsync([FromBody] CommentCreateModel comment,
         CancellationToken cancellationToken)
     {
-        var commentModel = mapper.Map<CommentModel>(comment);
-        var createdComment = await commentService.AddCommentAsync(commentModel, cancellationToken);
+        var createdComment = await commentService.AddCommentAsync(comment.Text, comment.ParentCommentId, comment.UserId, cancellationToken);
         var commentViewModel = mapper.Map<CommentViewModel>(createdComment);
         return Ok(commentViewModel);
     }
     
-    // [HttpDelete("{userId:int}")]
-    // public async Task<IActionResult> DeleteUserAsync(int userId, CancellationToken cancellationToken)
-    // {
-    //     await userService.DeleteUserAsync(userId, cancellationToken);
-    //     return Ok("User was deleted");
-    // }
+    [HttpDelete("{commentId:int}")]
+    public async Task<IActionResult> DeleteCommentAsync(int commentId, CancellationToken cancellationToken)
+    {
+        await commentService.DeleteCommentAsync(commentId, cancellationToken);
+        return Ok("Comment was deleted");
+    }
+    
+    [HttpGet("{commentId}/replies")]
+    public async Task<IActionResult> GetRepliesAsync(int commentId, CancellationToken cancellationToken)
+    {
+        var replies = await commentService.GetRepliesAsync(commentId, cancellationToken);
+        var replyViewModels = mapper.Map<IEnumerable<CommentViewModel>>(replies);
+        return Ok(replyViewModels);
+    }
+    
+    [HttpGet("{commentId}/tree")]
+    public async Task<IActionResult> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken)
+    {
+        var commentTree = await commentService.GetCommentsTreeAsync(commentId, cancellationToken);
+        var commentTreeViewModel = mapper.Map<IEnumerable<CommentViewModel>>(commentTree);
+        return Ok(commentTreeViewModel);
+    }
 }
