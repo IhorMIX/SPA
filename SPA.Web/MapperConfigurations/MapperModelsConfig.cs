@@ -15,7 +15,6 @@ public class MapperModelsConfig : Profile
 
         CreateMap<CommentCreateModel, CommentModel>();
         CreateMap<Comment, CommentModel>().ReverseMap();
-        CreateMap<CommentModel, CommentViewModel>()
-            .ForMember(dest => dest.Replies, opt => opt.Ignore());
+        CreateMap<CommentModel, CommentViewModel>();
     }
 }
