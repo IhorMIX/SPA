@@ -7,23 +7,6 @@ namespace SPA.DAL.Repositories;
 public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
 {
     private readonly SPADbContext _spaDbContext = spaDbContext;
-    
-    private async Task LoadRepliesAsync(Comment comment, CancellationToken cancellationToken)
-    {
-        var replies = await _spaDbContext.Comments
-            .Include(c => c.User)
-            .Include(c => c.Replies)
-            .ThenInclude(r => r.User)
-            .Where(c => c.ParentCommentId == comment.Id)
-            .ToListAsync(cancellationToken);
-
-        comment.Replies = replies;
-        
-        foreach (var reply in replies)
-        {
-            await LoadRepliesAsync(reply, cancellationToken);
-        }
-    }
     public IQueryable<Comment> GetAll()
     {
         return _spaDbContext.Comments
@@ -48,22 +31,18 @@ public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
             .Where(c => c.ParentCommentId == commentId)
             .ToListAsync(cancellationToken);
     }
-
-    public async Task<IEnumerable<Comment?>> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
+    
+    public async Task<IEnumerable<Comment>> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
     {
         var comment = await _spaDbContext.Comments
             .Include(c => c.User)
-            .Include(c => c.Replies)
-            .ThenInclude(r => r.User)
             .Include(c => c.Attachments)
-            .Where(c => c.Id == commentId)
-            .FirstOrDefaultAsync(cancellationToken);
-        
-        await LoadRepliesAsync(comment, cancellationToken);
+            .Where(c => c.Id == commentId || c.ParentCommentId == commentId)
+            .ToListAsync(cancellationToken);
 
-        return new List<Comment?> { comment };
+        return comment;
     }
-
+    
     public async Task AddAsync(Comment comment, CancellationToken cancellationToken = default)
     {
         await _spaDbContext.Comments.AddAsync(comment, cancellationToken);
