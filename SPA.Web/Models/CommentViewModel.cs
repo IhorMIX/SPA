@@ -10,7 +10,4 @@ public class CommentViewModel
     public DateTime CreatedAt { get; set; }
     public int? ParentCommentId { get; set; }
     public int UserId { get; set; }
-    
-    // [JsonIgnore]
-    // public ICollection<CommentViewModel> Replies { get; set; } = new List<CommentViewModel>();
 }
