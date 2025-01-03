@@ -55,6 +55,7 @@ public class Startup
         
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseCors(b => b.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
         
         app.UseAuthentication();
         app.UseAuthorization();
