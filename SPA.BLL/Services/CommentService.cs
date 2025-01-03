@@ -20,7 +20,7 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         return commentModel;
     }
 
-    public async Task<CommentModel> AddCommentAsync(string text,int parentCommentId,int userId, CancellationToken cancellationToken = default)
+    public async Task<CommentModel> AddCommentAsync(string text,int? parentCommentId,int userId, CancellationToken cancellationToken = default)
     {
         // var userDb = await userRepository.GetByIdAsync(userModel.Id, cancellationToken);
         // if (userDb == null)

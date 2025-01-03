@@ -1,22 +1,27 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SPA.BLL.Models;
 using SPA.BLL.Services.Interfaces;
 using SPA.Web.Models;
 
 namespace SPA.Web.Controllers;
 
-[AllowAnonymous]
 [Route("api/[controller]")]
 [ApiController]
-public class UserController(IUserService userService, IMapper mapper) : ControllerBase
+public class UserController(IUserService userService, ILogger<UserController> logger, IMapper mapper) : ControllerBase
 {
     
+    [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> CreateUserAsync([FromBody] UserCreateModel user,CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateUser([FromBody] UserCreateViewModel user,
+        CancellationToken cancellationToken)
     {
-        var userModel = await userService.CreateUserAsync(user.UserName, user.Email, user.HomePage, cancellationToken);
-        return Ok(mapper.Map<UserViewModel>(userModel));
+        logger.LogInformation("Start to create user");
+        await userService.CreateUserAsync(mapper.Map<UserModel>(user), cancellationToken);
+
+        logger.LogInformation("User was created");
+        return Ok();
     }
     
     [HttpDelete("{userId:int}")]

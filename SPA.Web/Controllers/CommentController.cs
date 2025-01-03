@@ -2,11 +2,11 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SPA.BLL.Services.Interfaces;
+using SPA.Web.Extensions;
 using SPA.Web.Models;
 
 namespace SPA.Web.Controllers;
 
-[AllowAnonymous]
 [Route("api/[controller]")]
 [ApiController]
 public class CommentController(IUserService userService, ICommentService commentService, IMapper mapper)
@@ -16,7 +16,8 @@ public class CommentController(IUserService userService, ICommentService comment
     public async Task<IActionResult> CreateCommentAsync([FromBody] CommentCreateModel comment,
         CancellationToken cancellationToken)
     {
-        var createdComment = await commentService.AddCommentAsync(comment.Text, comment.ParentCommentId, comment.UserId, cancellationToken);
+        var userId = User.GetUserId(); 
+        var createdComment = await commentService.AddCommentAsync(comment.Text, comment.ParentCommentId, userId, cancellationToken);
         var commentViewModel = mapper.Map<CommentViewModel>(createdComment);
         return Ok(commentViewModel);
     }

@@ -29,4 +29,10 @@ public class UserRepository(SPADbContext spaDbContext) : IUserRepository
         _spaDbContext.Users.Remove(user);
         await _spaDbContext.SaveChangesAsync(cancellationToken);
     }
+
+    public async Task UpdateUserAsync(User user, CancellationToken cancellationToken = default)
+    {
+        _spaDbContext.Users.Update(user);
+        await _spaDbContext.SaveChangesAsync(cancellationToken);
+    }
 }
