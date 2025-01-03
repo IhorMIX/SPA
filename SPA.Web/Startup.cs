@@ -4,6 +4,7 @@ using SPA.BLL.Services.Interfaces;
 using SPA.DAL;
 using SPA.DAL.Repositories;
 using SPA.DAL.Repositories.Interfaces;
+using SPA.Web.Helpers;
 
 namespace SPA.Web;
 
@@ -31,7 +32,13 @@ public class Startup
         services.AddScoped<ICommentService, CommentService>();
         services.AddScoped<ICommentRepository, CommentRepository>();
         
+        services.AddSingleton<TokenHelper>();
+        
         services.AddControllers();
+        
+        services.AddAutoMapper(typeof(Startup));
+        
+        services.AddJwtAuth();
     }
     
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -45,8 +52,12 @@ public class Startup
             app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
-        app.UseRouting();
+        
         app.UseStaticFiles();
+        app.UseRouting();
+        
+        app.UseAuthentication();
+        app.UseAuthorization();
         
         app.UseEndpoints(endpoints =>
         {

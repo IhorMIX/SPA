@@ -10,6 +10,7 @@ public class SPADbContext : DbContext
     }
     
     public DbSet<User> Users { get; set; }
+    public DbSet<AuthorizationInfo> AuthorizationInfos { get; set; }
     public DbSet<Comment> Comments { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
 

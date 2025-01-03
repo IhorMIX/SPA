@@ -9,6 +9,10 @@ public class UserConfiguration: IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.HasKey(u => u.Id);
+        
+        builder.HasOne(u => u.AuthorizationInfo)
+            .WithOne(a => a.User)
+            .HasForeignKey<AuthorizationInfo>(a => a.UserId);
 
         builder.HasMany(u => u.Comments) 
             .WithOne(c => c.User)
