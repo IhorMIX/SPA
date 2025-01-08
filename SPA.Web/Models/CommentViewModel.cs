@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using SPA.BLL.Models;
 
 namespace SPA.Web.Models;

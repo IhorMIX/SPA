@@ -5,6 +5,7 @@ using SPA.DAL;
 using SPA.DAL.Repositories;
 using SPA.DAL.Repositories.Interfaces;
 using SPA.Web.Helpers;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 namespace SPA.Web;
 
