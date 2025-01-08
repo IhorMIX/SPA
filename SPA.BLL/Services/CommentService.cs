@@ -114,29 +114,23 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         PaginationModel pagination,
         CancellationToken cancellationToken = default)
     {
-        // Получаем все деревья комментариев
         var trees = await commentRepository.GetAllTreesAsync(cancellationToken);
-
-        // Применяем пагинацию
+        
         var paginatedTrees = trees
             .Skip((pagination.CurrentPage - 1) * pagination.PageSize)
             .Take(pagination.PageSize)
             .ToList();
-
-        // Считаем общее количество элементов
+        
         var totalItems = trees.Count();
-
-        // Проверяем, что paginatedTrees действительно является List<Comment>
-        // и маппируем на IEnumerable<CommentModel>
+        
         var mappedTrees = mapper.Map<IEnumerable<IEnumerable<CommentModel>>>(paginatedTrees);
-
-        // Формируем результат пагинации
+        
         var paginationResult = new PaginationResultModel<IEnumerable<CommentModel>>
         {
-            Data = mappedTrees,                  // Передаем IEnumerable<CommentModel>
-            CurrentPage = pagination.CurrentPage, // Текущая страница
-            PageSize = pagination.PageSize,       // Размер страницы
-            TotalItems = totalItems,              // Общее количество элементов
+            Data = mappedTrees,
+            CurrentPage = pagination.CurrentPage,
+            PageSize = pagination.PageSize,
+            TotalItems = totalItems,
         };
 
         return paginationResult;

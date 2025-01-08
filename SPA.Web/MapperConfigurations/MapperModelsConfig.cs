@@ -17,8 +17,7 @@ namespace SPA.Web.MapperConfigurations
             CreateMap<CommentCreateModel, CommentModel>();
             CreateMap<Comment, CommentModel>().ReverseMap();
             CreateMap<CommentModel, CommentViewModel>();
-
-            // Явный маппинг для PaginationResultModel с вложенными коллекциями
+            
             CreateMap<PaginationResultModel<IEnumerable<CommentModel>>, PaginationResultModel<IEnumerable<CommentViewModel>>>()
                 .ForMember(dest => dest.Data, opt => opt.MapFrom((src, dest, member, context) => 
                     src.Data.Select(commentList => commentList.Select(c => context.Mapper.Map<CommentViewModel>(c))))
