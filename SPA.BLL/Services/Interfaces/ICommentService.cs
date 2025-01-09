@@ -18,7 +18,7 @@ public interface ICommentService : IBasicService<CommentModel>
     Task<IEnumerable<CommentModel>> GetTreeByCommentIdAsync(int commentId,
         CancellationToken cancellationToken = default);
 
-    Task<PaginationResultModel<IEnumerable<CommentModel>>> GetAllCommentTreesAsync(
+    Task<PaginationResultModel<CommentModel>> GetAllCommentTreesAsync(
         PaginationModel pagination,
         CancellationToken cancellationToken = default);
 }

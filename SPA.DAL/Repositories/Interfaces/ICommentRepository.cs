@@ -6,7 +6,7 @@ public interface ICommentRepository: IBasicRepository<Comment>
 {
     // IQueryable<Comment> GetRepliesAsync(int commentId);
     IQueryable<Comment> GetAllParentCommentsAsync();
-    Task<IEnumerable<List<Comment>>> GetAllTreesAsync(CancellationToken cancellationToken = default);
+    Task<IEnumerable<Comment>> GetAllTreesAsync(CancellationToken cancellationToken = default);
     Task<IEnumerable<Comment>> GetTreeAsync(int commentId, CancellationToken cancellationToken = default);
     Task AddAsync(Comment comment, CancellationToken cancellationToken = default);
     Task DeleteAsync(Comment comment, CancellationToken cancellationToken = default);

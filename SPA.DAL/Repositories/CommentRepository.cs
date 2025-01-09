@@ -46,53 +46,43 @@ public class CommentRepository(SPADbContext spaDbContext) : ICommentRepository
 
         return comment;
     }
-    public async Task<IEnumerable<List<Comment>>> GetAllTreesAsync(CancellationToken cancellationToken = default)
+
+    public async Task<IEnumerable<Comment>> GetAllTreesAsync(CancellationToken cancellationToken = default)
     {
         var comments = await _spaDbContext.Comments
             .Include(c => c.User)
             .Include(c => c.Attachments)
             .ToListAsync(cancellationToken);
         
-        var groupedComments = comments
-            .GroupBy(c => c.ParentCommentId)
-            .ToList();
-        
-        var addedCommentIds = new HashSet<int>();
-        
-        var commentTrees = new List<List<Comment>>();
-        
-        var parentComments = groupedComments.FirstOrDefault(g => g.Key == null)?.ToList() ?? new List<Comment>();
-        
-        foreach (var parentComment in parentComments)
-        {
-            if (addedCommentIds.Add(parentComment.Id))
-            {
-                var commentTree = BuildCommentTree(parentComment, groupedComments, addedCommentIds);
-                commentTrees.Add(commentTree);
-            }
-        }
+        var sortedComments = SortCommentsByHierarchy(comments);
 
-        return commentTrees;
+        return sortedComments;
     }
 
-    private List<Comment> BuildCommentTree(Comment parentComment, List<IGrouping<int?, Comment>> groupedComments, HashSet<int> addedCommentIds)
+
+    private List<Comment> SortCommentsByHierarchy(List<Comment> comments)
     {
-        var commentTree = new List<Comment> { parentComment };
+        var sortedComments = new List<Comment>();
         
-        var childComments = groupedComments
-            .FirstOrDefault(g => g.Key == parentComment.Id)?.ToList() ?? new List<Comment>();
-        
-        foreach (var child in childComments)
+        void AddWithReplies(Comment comment)
         {
-            if (addedCommentIds.Add(child.Id)) 
+            sortedComments.Add(comment);
+            
+            var replies = comments.Where(c => c.ParentCommentId == comment.Id).OrderBy(c => c.CreatedAt);
+            foreach (var reply in replies)
             {
-                var nestedChildTree = BuildCommentTree(child, groupedComments, addedCommentIds);
-                commentTree.AddRange(nestedChildTree);
+                AddWithReplies(reply);
             }
         }
-        return commentTree;
-    }
+        
+        var rootComments = comments.Where(c => c.ParentCommentId == null).OrderBy(c => c.CreatedAt);
+        foreach (var rootComment in rootComments)
+        {
+            AddWithReplies(rootComment);
+        }
 
+        return sortedComments;
+    }
 
 
     public async Task AddAsync(Comment comment, CancellationToken cancellationToken = default)

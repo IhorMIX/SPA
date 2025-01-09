@@ -18,12 +18,7 @@ namespace SPA.Web.MapperConfigurations
             CreateMap<Comment, CommentModel>().ReverseMap();
             CreateMap<CommentModel, CommentViewModel>();
             
-            CreateMap<PaginationResultModel<IEnumerable<CommentModel>>, PaginationResultModel<IEnumerable<CommentViewModel>>>()
-                .ForMember(dest => dest.Data, opt => opt.MapFrom((src, dest, member, context) => 
-                    src.Data.Select(commentList => commentList.Select(c => context.Mapper.Map<CommentViewModel>(c))))
-                )
-                .ForMember(dest => dest.PageSize, opt => opt.Ignore())
-                .ReverseMap();
+            CreateMap<PaginationResultModel<CommentModel>, PaginationResultModel<CommentViewModel>>().ReverseMap();
         }
     }
 

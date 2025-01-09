@@ -52,14 +52,15 @@ public class CommentController(IUserService userService, ICommentService comment
         CancellationToken cancellationToken)
     {
         var result = await commentService.GetAllParentCommentsAsync(pagination, cancellationToken);
-        return Ok(result);
+        var mapperModels = mapper.Map<PaginationResultModel<CommentViewModel>>(result);
+        return Ok(mapperModels);
     }
     
     [HttpGet("comments/trees")]
     public async Task<IActionResult> GetAllCommentTrees([FromQuery] PaginationModel pagination, CancellationToken cancellationToken)
     {
         var commentTrees = await commentService.GetAllCommentTreesAsync(pagination, cancellationToken);
-        var commentTreesViewModel = mapper.Map<PaginationResultModel<IEnumerable<CommentViewModel>>>(commentTrees);
+        var commentTreesViewModel = mapper.Map<PaginationResultModel<CommentViewModel>>(commentTrees);
         
         return Ok(commentTreesViewModel);
     }
