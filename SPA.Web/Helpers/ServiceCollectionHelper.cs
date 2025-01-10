@@ -17,14 +17,13 @@ public static class ServiceCollectionHelper
                     ValidateIssuer = true,
 
                     ValidIssuer = AuthOption.AuthOptions.ISSUER,
-
+                    
                     ValidateAudience = true,
 
                     ValidAudience = AuthOption.AuthOptions.AUDIENCE,
 
                     ValidateLifetime = true,
-
-
+                    
                     IssuerSigningKey = AuthOption.AuthOptions.GetSymmetricSecurityKey(),
                     ValidateIssuerSigningKey = true,
                 };

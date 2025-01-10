@@ -143,7 +143,7 @@ public class UserService(IUserRepository userRepository,  IMapper mapper) : IUse
 
     public async Task LogOutAsync(int userId, CancellationToken cancellationToken = default)
     {
-        var userDb = await userRepository.GetByIdAsync(userId, cancellationToken);
+        var userDb = await userRepository.GetAll().Include(r => r.AuthorizationInfo).FirstOrDefaultAsync(r => r.Id == userId, cancellationToken);
         if (userDb is null)
             throw new UserNotFoundException($"User with this Id {userId} not found");
 
@@ -154,4 +154,4 @@ public class UserService(IUserRepository userRepository,  IMapper mapper) : IUse
         }
         else throw new NullReferenceException($"User with this token not found");
     }
-}
+}    

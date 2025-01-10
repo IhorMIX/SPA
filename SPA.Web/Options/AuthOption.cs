@@ -7,8 +7,8 @@ public class AuthOption
 {
     public class AuthOptions
     {
-        public const string ISSUER = "FreeMaterial"; // token publisher
-        public const string AUDIENCE = "Material"; // token customer
+        public const string ISSUER = "FreeSPA"; // token publisher
+        public const string AUDIENCE = "SPA"; // token customer
         const string KEY = "YourSuperSecretKeyThatIs32BytesLong";   // encryption key
         public const int LIFETIME = 1440; // token liftime
         public const string UserIdCalmName = "UserId";
