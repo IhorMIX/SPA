@@ -50,6 +50,7 @@ public class Startup
             app.UseExceptionHandler("/Error");
             app.UseHsts();
         }
+        app.UseHttpsRedirection();
         app.UseMiddleware<ErrorHandlingMiddleware>(); 
         
         app.UseRouting();
