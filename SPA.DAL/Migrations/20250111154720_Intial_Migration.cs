@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SPA.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class Initial : Migration
+    public partial class Intial_Migration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,8 @@ namespace SPA.DAL.Migrations
                     UserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    HomePage = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    HomePage = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AuthorizationInfoId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,7 +29,7 @@ namespace SPA.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AuthorizationInfos",
+                name: "AuthorizationInfo",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -39,9 +40,9 @@ namespace SPA.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuthorizationInfos", x => x.Id);
+                    table.PrimaryKey("PK_AuthorizationInfo", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AuthorizationInfos_Users_UserId",
+                        name: "FK_AuthorizationInfo_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -103,8 +104,8 @@ namespace SPA.DAL.Migrations
                 column: "CommentId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AuthorizationInfos_UserId",
-                table: "AuthorizationInfos",
+                name: "IX_AuthorizationInfo_UserId",
+                table: "AuthorizationInfo",
                 column: "UserId",
                 unique: true);
 
@@ -126,7 +127,7 @@ namespace SPA.DAL.Migrations
                 name: "Attachments");
 
             migrationBuilder.DropTable(
-                name: "AuthorizationInfos");
+                name: "AuthorizationInfo");
 
             migrationBuilder.DropTable(
                 name: "Comments");

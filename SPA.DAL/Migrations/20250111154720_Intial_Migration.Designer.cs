@@ -12,8 +12,8 @@ using SPA.DAL;
 namespace SPA.DAL.Migrations
 {
     [DbContext(typeof(SPADbContext))]
-    [Migration("20250103162608_Initial")]
-    partial class Initial
+    [Migration("20250111154720_Intial_Migration")]
+    partial class Intial_Migration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -74,7 +74,7 @@ namespace SPA.DAL.Migrations
                     b.HasIndex("UserId")
                         .IsUnique();
 
-                    b.ToTable("AuthorizationInfos");
+                    b.ToTable("AuthorizationInfo");
                 });
 
             modelBuilder.Entity("SPA.DAL.Entity.Comment", b =>
@@ -114,6 +114,9 @@ namespace SPA.DAL.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorizationInfoId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Email")
                         .IsRequired()
