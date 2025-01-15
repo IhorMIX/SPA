@@ -12,8 +12,8 @@ using SPA.DAL;
 namespace SPA.DAL.Migrations
 {
     [DbContext(typeof(SPADbContext))]
-    [Migration("20250111154720_Intial_Migration")]
-    partial class Intial_Migration
+    [Migration("20250115133650_InitialLogic")]
+    partial class InitialLogic
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,11 +36,7 @@ namespace SPA.DAL.Migrations
                     b.Property<int>("CommentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FileType")
+                    b.Property<string>("FileUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
