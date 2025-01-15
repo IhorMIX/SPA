@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SPA.DAL;
 
@@ -11,9 +12,11 @@ using SPA.DAL;
 namespace SPA.DAL.Migrations
 {
     [DbContext(typeof(SPADbContext))]
-    partial class SPADbContextModelSnapshot : ModelSnapshot
+    [Migration("20250115174308_AttachmentUpdate_Migration")]
+    partial class AttachmentUpdate_Migration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
