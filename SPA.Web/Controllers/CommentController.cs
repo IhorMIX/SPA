@@ -18,7 +18,7 @@ public class CommentController(IUserService userService, ICommentService comment
         CancellationToken cancellationToken)
     {
         var userId = User.GetUserId(); 
-        var createdComment = await commentService.AddCommentAsync(comment.Text, comment.ParentCommentId, userId, cancellationToken);
+        var createdComment = await commentService.AddCommentAsync(mapper.Map<CommentModel>(comment), userId, cancellationToken);
         var commentViewModel = mapper.Map<CommentViewModel>(createdComment);
         return Ok(commentViewModel);
     }

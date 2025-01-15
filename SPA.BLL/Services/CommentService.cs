@@ -22,7 +22,7 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         return commentModel;
     }
 
-    public async Task<CommentModel> AddCommentAsync(string text,int? parentCommentId,int userId, CancellationToken cancellationToken = default)
+    public async Task<CommentModel> AddCommentAsync(CommentModel commentModel,int userId, CancellationToken cancellationToken = default)
     {
         // var userDb = await userRepository.GetByIdAsync(userModel.Id, cancellationToken);
         // if (userDb == null)
@@ -31,13 +31,21 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         // }
         var comment = new Comment
         {
-            Text = text,
+            Text = commentModel.Text,
             CreatedAt = DateTime.UtcNow,
-            ParentCommentId = parentCommentId,
-            UserId = userId
+            ParentCommentId = commentModel.ParentCommentId,
+            UserId = userId,
+            Attachments = commentModel.Attachments.Select(a => new Attachment
+            {
+                FileURL = a.FileURL
+            }).ToList()
         };
-        
         await commentRepository.AddAsync(comment, cancellationToken);
+        
+        foreach (var attachment in comment.Attachments)
+        {
+            attachment.CommentId = comment.Id;
+        } 
         return mapper.Map<CommentModel>(comment);
     }
 

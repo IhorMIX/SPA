@@ -9,4 +9,5 @@ public class CommentViewModel
     public DateTime CreatedAt { get; set; }
     public int? ParentCommentId { get; set; }
     public int UserId { get; set; }
+    public ICollection<AttachmentViewModel> Attachments { get; set; } = null!;
 }

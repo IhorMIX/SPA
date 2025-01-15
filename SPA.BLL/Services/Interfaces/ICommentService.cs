@@ -4,9 +4,8 @@ namespace SPA.BLL.Services.Interfaces;
 
 public interface ICommentService : IBasicService<CommentModel>
 {
-    Task<CommentModel> AddCommentAsync(string text, int? parentCommentId, int userId,
+    Task<CommentModel> AddCommentAsync(CommentModel commentModel, int userId,
         CancellationToken cancellationToken = default);
-
     Task DeleteCommentAsync(int commentId, CancellationToken cancellationToken = default);
 
     // Task<PaginationResultModel<CommentModel>> GetRepliesAsync(int commentId, PaginationModel pagination,

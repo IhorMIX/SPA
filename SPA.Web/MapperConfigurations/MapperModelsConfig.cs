@@ -15,11 +15,16 @@ namespace SPA.Web.MapperConfigurations
             CreateMap<AuthorizationInfo, AuthorizationInfoModel>().ReverseMap();
 
             CreateMap<CommentCreateModel, CommentModel>();
-            CreateMap<Comment, CommentModel>().ReverseMap();
-            CreateMap<CommentModel, CommentViewModel>();
+            CreateMap<Comment, CommentModel>()
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Attachments));
+            
+            CreateMap<CommentModel, CommentViewModel>()
+                .ForMember(dest => dest.Attachments, opt => opt.MapFrom(src => src.Attachments));
+            
+            CreateMap<Attachment, AttachmentModel>().ReverseMap();
+            CreateMap<AttachmentModel, AttachmentViewModel>().ReverseMap();
             
             CreateMap<PaginationResultModel<CommentModel>, PaginationResultModel<CommentViewModel>>().ReverseMap();
         }
     }
-
 }
