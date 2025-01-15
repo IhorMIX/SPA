@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SPA.DAL.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialLogic : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -83,7 +83,7 @@ namespace SPA.DAL.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FileUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FileURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CommentId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

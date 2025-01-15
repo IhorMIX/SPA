@@ -33,7 +33,7 @@ namespace SPA.DAL.Migrations
                     b.Property<int>("CommentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FileUrl")
+                    b.Property<string>("FileURL")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

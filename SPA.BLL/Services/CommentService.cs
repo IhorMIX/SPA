@@ -110,30 +110,30 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         var tree = await commentRepository.GetTreeAsync(commentId, cancellationToken);
         return mapper.Map<IEnumerable<CommentModel>>(tree);
     }
-    public async Task<PaginationResultModel<CommentModel>> GetAllCommentTreesAsync(
+    public async Task<IEnumerable<CommentModel>> GetAllCommentTreesAsync(
         PaginationModel pagination,
         CancellationToken cancellationToken = default)
     {
         var trees = await commentRepository.GetAllTreesAsync(cancellationToken);
         
-        var paginatedTrees = trees
-            .Skip((pagination.CurrentPage - 1) * pagination.PageSize)
-            .Take(pagination.PageSize)
-            .ToList();
+        // var paginatedTrees = trees
+        //     .Skip((pagination.CurrentPage - 1) * pagination.PageSize)
+        //     .Take(pagination.PageSize)
+        //     .ToList();
         
         var totalItems = trees.Count();
         
-        var mappedTrees = mapper.Map<IEnumerable<CommentModel>>(paginatedTrees);
+        var mappedTrees = mapper.Map<IEnumerable<CommentModel>>(trees);
         
-        var paginationResult = new PaginationResultModel<CommentModel>
-        {
-            Data = mappedTrees,
-            CurrentPage = pagination.CurrentPage,
-            PageSize = pagination.PageSize,
-            TotalItems = totalItems,
-        };
+        // var paginationResult = new PaginationResultModel<CommentModel>
+        // {
+        //     Data = mappedTrees,
+        //     CurrentPage = pagination.CurrentPage,
+        //     PageSize = pagination.PageSize,
+        //     TotalItems = totalItems,
+        // };
 
-        return paginationResult;
+        return mappedTrees;
     }
 
 
