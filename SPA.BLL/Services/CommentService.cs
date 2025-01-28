@@ -24,11 +24,6 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
 
     public async Task<CommentModel> AddCommentAsync(CommentModel commentModel,int userId, CancellationToken cancellationToken = default)
     {
-        // var userDb = await userRepository.GetByIdAsync(userModel.Id, cancellationToken);
-        // if (userDb == null)
-        // {
-        //     throw new UserNotFoundException($"User with this Id {userModel.Id} not found");
-        // }
         var comment = new Comment
         {
             Text = commentModel.Text,
@@ -58,33 +53,6 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         await commentRepository.DeleteAsync(commentDb, cancellationToken);
     }
 
-    // public async Task<PaginationResultModel<CommentModel>> GetRepliesAsync(int commentId, PaginationModel pagination, CancellationToken cancellationToken = default)
-    // {
-    //     var parentComment = await commentRepository.GetByIdAsync(commentId, cancellationToken);
-    //     if (parentComment == null)
-    //         throw new CommentNotFoundException($"Comment with ID {commentId} not found.");
-    //
-    //     if (parentComment.ParentCommentId != null)
-    //         throw new CommentIsNotMainException($"Comment with ID {commentId} is not a top-level comment.");
-    //
-    //     var replies = await commentRepository.GetRepliesAsync(commentId).Select(i=>i.)
-    //         .Pagination(pagination.CurrentPage, pagination.PageSize)
-    //         .ToListAsync(cancellationToken);
-    //     
-    //     var commentModels = mapper.Map<IEnumerable<CommentModel>>(replies).ToList();
-    //
-    //
-    //     var paginationModel = new PaginationResultModel<CommentModel>
-    //     {
-    //         Data = commentModels,
-    //         CurrentPage = pagination.CurrentPage,
-    //         PageSize = pagination.PageSize,
-    //         TotalItems = replies.Count,
-    //     };
-    //
-    //     return paginationModel;
-    // }
-    
     public async Task<PaginationResultModel<CommentModel>> GetAllParentCommentsAsync(
         PaginationModel pagination,
         CancellationToken cancellationToken = default)

@@ -8,8 +8,6 @@ public interface ICommentService : IBasicService<CommentModel>
         CancellationToken cancellationToken = default);
     Task DeleteCommentAsync(int commentId, CancellationToken cancellationToken = default);
 
-    // Task<PaginationResultModel<CommentModel>> GetRepliesAsync(int commentId, PaginationModel pagination,
-    //     CancellationToken cancellationToken = default);
     Task<PaginationResultModel<CommentModel>> GetAllParentCommentsAsync(
         PaginationModel pagination,
         CancellationToken cancellationToken = default);
