@@ -1,5 +1,7 @@
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SPA.BLL.Exceptions;
+using SPA.BLL.Extensions;
 using SPA.BLL.Models;
 using SPA.BLL.Services.Interfaces;
 using SPA.DAL.Entity;
@@ -20,22 +22,25 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         return commentModel;
     }
 
-    public async Task<CommentModel> AddCommentAsync(string text,int parentCommentId,int userId, CancellationToken cancellationToken = default)
+    public async Task<CommentModel> AddCommentAsync(CommentModel commentModel,int userId, CancellationToken cancellationToken = default)
     {
-        // var userDb = await userRepository.GetByIdAsync(userModel.Id, cancellationToken);
-        // if (userDb == null)
-        // {
-        //     throw new UserNotFoundException($"User with this Id {userModel.Id} not found");
-        // }
         var comment = new Comment
         {
-            Text = text,
+            Text = commentModel.Text,
             CreatedAt = DateTime.UtcNow,
-            ParentCommentId = parentCommentId,
-            UserId = userId
+            ParentCommentId = commentModel.ParentCommentId,
+            UserId = userId,
+            Attachments = commentModel.Attachments.Select(a => new Attachment
+            {
+                FileURL = a.FileURL
+            }).ToList()
         };
-        
         await commentRepository.AddAsync(comment, cancellationToken);
+        
+        foreach (var attachment in comment.Attachments)
+        {
+            attachment.CommentId = comment.Id;
+        } 
         return mapper.Map<CommentModel>(comment);
     }
 
@@ -48,27 +53,64 @@ public class CommentService(ICommentRepository commentRepository,IUserRepository
         await commentRepository.DeleteAsync(commentDb, cancellationToken);
     }
 
-    public async Task<IEnumerable<CommentModel>> GetRepliesAsync(int commentId, CancellationToken cancellationToken = default)
+    public async Task<PaginationResultModel<CommentModel>> GetAllParentCommentsAsync(
+        PaginationModel pagination,
+        CancellationToken cancellationToken = default)
     {
-        var parentComment = await commentRepository.GetByIdAsync(commentId, cancellationToken);
-        if (parentComment == null)
-            throw new CommentNotFoundException($"Comment with ID {commentId} not found.");
+        var parentCommentsQuery = commentRepository.GetAllParentCommentsAsync();
+
+        var parentComments = await parentCommentsQuery
+            .Pagination(pagination.CurrentPage, pagination.PageSize)
+            .ToListAsync(cancellationToken);
+
+        var commentModels = mapper.Map<IEnumerable<CommentModel>>(parentComments);
         
-        if (parentComment.ParentCommentId != null)
-            throw new CommentIsNotMainException($"Comment with ID {commentId} is not a top-level comment.");
-        
-        var replies = await commentRepository.GetRepliesAsync(commentId, cancellationToken);
-        
-        return mapper.Map<IEnumerable<CommentModel>>(replies);
+        var paginationResult = new PaginationResultModel<CommentModel>
+        {
+            Data = commentModels,
+            CurrentPage = pagination.CurrentPage,
+            PageSize = pagination.PageSize,
+            TotalItems = await parentCommentsQuery.CountAsync(cancellationToken),
+        };
+
+        return paginationResult;
     }
+    
 
-    public async Task<IEnumerable<CommentModel>> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<CommentModel>> GetTreeByCommentIdAsync(int commentId, CancellationToken cancellationToken = default)
     {
         var parentComment = await commentRepository.GetByIdAsync(commentId, cancellationToken);
         if (parentComment == null)
             throw new CommentNotFoundException($"Comment with ID {commentId} not found.");
 
-        var tree = await commentRepository.GetCommentsTreeAsync(commentId, cancellationToken);
+        var tree = await commentRepository.GetTreeAsync(commentId, cancellationToken);
         return mapper.Map<IEnumerable<CommentModel>>(tree);
     }
+    public async Task<IEnumerable<CommentModel>> GetAllCommentTreesAsync(
+        PaginationModel pagination,
+        CancellationToken cancellationToken = default)
+    {
+        var trees = await commentRepository.GetAllTreesAsync(cancellationToken);
+        
+        // var paginatedTrees = trees
+        //     .Skip((pagination.CurrentPage - 1) * pagination.PageSize)
+        //     .Take(pagination.PageSize)
+        //     .ToList();
+        
+        var totalItems = trees.Count();
+        
+        var mappedTrees = mapper.Map<IEnumerable<CommentModel>>(trees);
+        
+        // var paginationResult = new PaginationResultModel<CommentModel>
+        // {
+        //     Data = mappedTrees,
+        //     CurrentPage = pagination.CurrentPage,
+        //     PageSize = pagination.PageSize,
+        //     TotalItems = totalItems,
+        // };
+
+        return mappedTrees;
+    }
+
+
 }

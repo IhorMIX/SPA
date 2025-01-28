@@ -6,4 +6,5 @@ public interface IUserRepository : IBasicRepository<User>
 {
     Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default);
     Task DeleteUserAsync(User user, CancellationToken cancellationToken = default);
+    Task UpdateUserAsync(User user, CancellationToken cancellationToken = default);
 }

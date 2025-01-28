@@ -10,23 +10,29 @@ public class UserRepository(SPADbContext spaDbContext) : IUserRepository
 
     public IQueryable<User> GetAll()
     {
-        return _spaDbContext.Users.AsQueryable();
+        return _spaDbContext.Users.Include(i => i.AuthorizationInfo).AsQueryable();
     }
 
     public async Task<User?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        return await _spaDbContext.Users.FirstOrDefaultAsync(i => i.Id == id, cancellationToken: cancellationToken);
+        return await spaDbContext.Users.Include(i => i.AuthorizationInfo).FirstOrDefaultAsync(i => i.Id == id, cancellationToken: cancellationToken);
     }
 
     public async Task<User> CreateUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        await _spaDbContext.Users.AddAsync(user, cancellationToken);
-        await _spaDbContext.SaveChangesAsync(cancellationToken);
+        await spaDbContext.Users.AddAsync(user, cancellationToken);
+        await spaDbContext.SaveChangesAsync(cancellationToken);
         return user;
     }
     public async Task DeleteUserAsync(User user, CancellationToken cancellationToken = default)
     {
-        _spaDbContext.Users.Remove(user);
-        await _spaDbContext.SaveChangesAsync(cancellationToken);
+        spaDbContext.Users.Remove(user);
+        await spaDbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task UpdateUserAsync(User user, CancellationToken cancellationToken = default)
+    {
+        spaDbContext.Users.Update(user);
+        await spaDbContext.SaveChangesAsync(cancellationToken);
     }
 }
