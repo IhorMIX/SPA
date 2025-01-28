@@ -1,12 +1,13 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SPA.BLL.Models;
 using SPA.BLL.Services.Interfaces;
+using SPA.Web.Extensions;
 using SPA.Web.Models;
 
 namespace SPA.Web.Controllers;
 
-[AllowAnonymous]
 [Route("api/[controller]")]
 [ApiController]
 public class CommentController(IUserService userService, ICommentService commentService, IMapper mapper)
@@ -16,7 +17,8 @@ public class CommentController(IUserService userService, ICommentService comment
     public async Task<IActionResult> CreateCommentAsync([FromBody] CommentCreateModel comment,
         CancellationToken cancellationToken)
     {
-        var createdComment = await commentService.AddCommentAsync(comment.Text, comment.ParentCommentId, comment.UserId, cancellationToken);
+        var userId = User.GetUserId(); 
+        var createdComment = await commentService.AddCommentAsync(mapper.Map<CommentModel>(comment), userId, cancellationToken);
         var commentViewModel = mapper.Map<CommentViewModel>(createdComment);
         return Ok(commentViewModel);
     }
@@ -28,19 +30,39 @@ public class CommentController(IUserService userService, ICommentService comment
         return Ok("Comment was deleted");
     }
     
-    [HttpGet("{commentId}/replies")]
-    public async Task<IActionResult> GetRepliesAsync(int commentId, CancellationToken cancellationToken)
-    {
-        var replies = await commentService.GetRepliesAsync(commentId, cancellationToken);
-        var replyViewModels = mapper.Map<IEnumerable<CommentViewModel>>(replies);
-        return Ok(replyViewModels);
-    }
+    // [HttpGet("{commentId}/replies")]
+    // public async Task<IActionResult> GetRepliesAsync([FromQuery] PaginationModel pagination, int commentId, CancellationToken cancellationToken)
+    // {
+    //     var replies = await commentService.GetRepliesAsync(commentId,pagination, cancellationToken);
+    //     var replyViewModels = mapper.Map<PaginationResultViewModel<CommentViewModel>>(replies);
+    //     return Ok(replyViewModels);
+    // }
     
     [HttpGet("{commentId}/tree")]
-    public async Task<IActionResult> GetCommentsTreeAsync(int commentId, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetTreeByCommentIdAsync(int commentId, CancellationToken cancellationToken)
     {
-        var commentTree = await commentService.GetCommentsTreeAsync(commentId, cancellationToken);
+        var commentTree = await commentService.GetTreeByCommentIdAsync(commentId, cancellationToken);
         var commentTreeViewModel = mapper.Map<IEnumerable<CommentViewModel>>(commentTree);
         return Ok(commentTreeViewModel);
     }
+    
+    [HttpGet("parent-comments")]
+    public async Task<IActionResult> GetAllParentComments(
+        [FromQuery] PaginationModel pagination,
+        CancellationToken cancellationToken)
+    {
+        var result = await commentService.GetAllParentCommentsAsync(pagination, cancellationToken);
+        var mapperModels = mapper.Map<PaginationResultModel<CommentViewModel>>(result);
+        return Ok(mapperModels);
+    }
+    
+    [HttpGet("comments/trees")]
+    public async Task<IActionResult> GetAllCommentTrees([FromQuery] PaginationModel pagination, CancellationToken cancellationToken)
+    {
+        var commentTrees = await commentService.GetAllCommentTreesAsync(pagination, cancellationToken);
+        var commentTreesViewModel = mapper.Map<IEnumerable<CommentViewModel>>(commentTrees);
+        
+        return Ok(commentTreesViewModel);
+    }
+
 }
